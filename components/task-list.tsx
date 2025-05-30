@@ -19,28 +19,18 @@ type Task = {
 }
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState<any[]>([])
+  const [tasks, setTasks] = useState<Task[]>([])
+  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
     async function fetchTasks() {
       const { data, error } = await supabase.from('tasks').select('*')
       if (error) console.error(error)
-      else setTasks(data)
+      else setTasks(data as Task[])
     }
 
     fetchTasks()
   }, [])
-
-  return (
-    <ul>
-      {tasks.map(task => (
-        <li key={task.id}>
-          <strong>{task.title}</strong> ({task.status})
-        </li>
-      ))}
-    </ul>
-  )
-}
 
   const toggleTaskCompletion = (taskId: string) => {
     setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)))
@@ -63,6 +53,10 @@ export default function TaskList() {
       default:
         return "bg-gray-500 hover:bg-gray-600"
     }
+  }
+
+  const toggleExpand = (taskId: string) => {
+    setExpandedTasks(prev => ({ ...prev, [taskId]: !prev[taskId] }))
   }
 
   return (
