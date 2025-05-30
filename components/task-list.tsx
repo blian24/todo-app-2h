@@ -4,14 +4,7 @@ import { useEffect, useState } from "react"
 import { supabase } from '@/lib/supabaseClient'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown, ChevronUp, FileText, LinkIcon, Trash2 } from "lucide-react"
 
@@ -33,22 +26,18 @@ export default function TaskList() {
     async function fetchTasks() {
       const { data, error } = await supabase.from('tasks').select('*')
       if (error) console.error(error)
-      else setTasks(data as Task[])
+      else setTasks(data || [])
     }
 
     fetchTasks()
   }, [])
 
   const toggleTaskCompletion = (taskId: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    )
+    setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)))
   }
 
   const deleteTask = (taskId: string) => {
-    setTasks((prev) => prev.filter((task) => task.id !== taskId))
+    setTasks(tasks.filter((task) => task.id !== taskId))
   }
 
   const toggleExpand = (taskId: string) => {
