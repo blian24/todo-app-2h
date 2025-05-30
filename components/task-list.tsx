@@ -4,7 +4,14 @@ import { useEffect, useState } from "react"
 import { supabase } from '@/lib/supabaseClient'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ChevronDown, ChevronUp, FileText, LinkIcon, Trash2 } from "lucide-react"
 
@@ -33,11 +40,19 @@ export default function TaskList() {
   }, [])
 
   const toggleTaskCompletion = (taskId: string) => {
-    setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)))
+    setTasks((prev) =>
+      prev.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    )
   }
 
   const deleteTask = (taskId: string) => {
-    setTasks(tasks.filter((task) => task.id !== taskId))
+    setTasks((prev) => prev.filter((task) => task.id !== taskId))
+  }
+
+  const toggleExpand = (taskId: string) => {
+    setExpandedTasks((prev) => ({ ...prev, [taskId]: !prev[taskId] }))
   }
 
   const getStatusColor = (status: string) => {
@@ -53,10 +68,6 @@ export default function TaskList() {
       default:
         return "bg-gray-500 hover:bg-gray-600"
     }
-  }
-
-  const toggleExpand = (taskId: string) => {
-    setExpandedTasks(prev => ({ ...prev, [taskId]: !prev[taskId] }))
   }
 
   return (
