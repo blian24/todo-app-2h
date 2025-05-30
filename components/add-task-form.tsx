@@ -1,6 +1,5 @@
 "use client"
 
-import type React from "react"
 import { useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 
@@ -99,7 +98,7 @@ export default function AddTaskForm() {
 
           <div className="space-y-2">
             <Label htmlFor="status">Status</Label>
-            <Select name="status" value={status} onValueChange={setStatus}>
+            <Select value={status} onValueChange={setStatus}>
               <SelectTrigger>
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
