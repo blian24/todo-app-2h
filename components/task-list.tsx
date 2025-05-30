@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { supabase } from '@/lib/supabaseClient'
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,46 +19,28 @@ type Task = {
 }
 
 export default function TaskList() {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Create project wireframes",
-      description: "Design the initial wireframes for the new project dashboard",
-      status: "done",
-      attachments: ["wireframe.pdf"],
-      relatedTasks: ["2"],
-      completed: true,
-    },
-    {
-      id: "2",
-      title: "Implement authentication flow",
-      description: "Create login, signup, and password reset functionality",
-      status: "in-progress",
-      relatedTasks: ["3"],
-    },
-    {
-      id: "3",
-      title: "Set up database schema",
-      description: "Design and implement the initial database schema for users and tasks",
-      status: "new",
-    },
-    {
-      id: "4",
-      title: "API integration",
-      description: "Connect to third-party API for data synchronization",
-      status: "blocked",
-      relatedTasks: ["2"],
-    },
-  ])
+  const [tasks, setTasks] = useState<any[]>([])
 
-  const [expandedTasks, setExpandedTasks] = useState<Record<string, boolean>>({})
+  useEffect(() => {
+    async function fetchTasks() {
+      const { data, error } = await supabase.from('tasks').select('*')
+      if (error) console.error(error)
+      else setTasks(data)
+    }
 
-  const toggleExpand = (taskId: string) => {
-    setExpandedTasks((prev) => ({
-      ...prev,
-      [taskId]: !prev[taskId],
-    }))
-  }
+    fetchTasks()
+  }, [])
+
+  return (
+    <ul>
+      {tasks.map(task => (
+        <li key={task.id}>
+          <strong>{task.title}</strong> ({task.status})
+        </li>
+      ))}
+    </ul>
+  )
+}
 
   const toggleTaskCompletion = (taskId: string) => {
     setTasks(tasks.map((task) => (task.id === taskId ? { ...task, completed: !task.completed } : task)))
